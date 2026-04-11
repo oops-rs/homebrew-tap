@@ -2,15 +2,27 @@
 class Numi < Formula
   desc "CLI for generating Swift code from Apple project resources"
   homepage "https://github.com/oops-rs/numi"
-  url "https://github.com/oops-rs/numi/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "487600d32a203d8409fb2ad7dfcefe3517236e65baaf89865c1a57ace71245ff"
+  version "0.1.0"
   license "MIT"
-  head "https://github.com/oops-rs/numi.git", branch: "main"
 
-  depends_on "rust" => :build
+  on_macos do
+    on_arm do
+      url "https://github.com/oops-rs/numi/releases/download/v0.1.0/numi-v0.1.0-aarch64-apple-darwin.tar.gz"
+      sha256 "4b89a5be18f8dcb831db2b989ec0d2f12152ea0a9944f220b8829382061a4f94"
+    end
+    on_intel do
+      url "https://github.com/oops-rs/numi/releases/download/v0.1.0/numi-v0.1.0-x86_64-apple-darwin.tar.gz"
+      sha256 "234569733ccccd73bd12732a52a86538a406407ef448f6e10d82b34dec4b1f5b"
+    end
+  end
+
+  on_linux do
+    url "https://github.com/oops-rs/numi/releases/download/v0.1.0/numi-v0.1.0-x86_64-unknown-linux-gnu.tar.gz"
+    sha256 "dd78c5172278f4afa9f18615e9738556d72a79daa670f73412d452e6c488d75f"
+  end
 
   def install
-    system "cargo", "install", "--locked", *std_cargo_args(path: "crates/numi-cli")
+    bin.install "numi"
   end
 
   test do

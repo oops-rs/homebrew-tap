@@ -22,7 +22,7 @@ brew install numi@0.1.0
 ## Notes
 
 - `langcodec-cli` installs the `langcodec` binary.
-- `numi` installs the `numi` binary from `crates/numi-cli`.
+- `numi` installs a prebuilt `numi` GitHub release binary on macOS and Linux.
 - `grapha` currently builds from source on macOS so the Swift bridge can be compiled inside the formula.
 - `langcodec` release workflows now publish standalone binary assets in addition to archives so future tap updates can switch to binary installs cleanly.
 

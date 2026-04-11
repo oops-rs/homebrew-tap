@@ -46,6 +46,14 @@ class_name_for_formula() {
 
 formula_version_from_file() {
   local file="$1"
+  local explicit_version=""
+
+  explicit_version="$(sed -n 's|^[[:space:]]*version "\([^"]*\)".*|v\1|p' "${file}" | head -n 1)"
+  if [[ -n "${explicit_version}" ]]; then
+    printf '%s\n' "${explicit_version}"
+    return
+  fi
+
   sed -n 's|.*archive/refs/tags/\(v[^"]*\)\.tar\.gz.*|\1|p' "${file}" | head -n 1
 }
 
@@ -57,11 +65,23 @@ sha256_file() {
   fi
 }
 
+download_sha256() {
+  local url="$1"
+  local tmp_file
+  tmp_file="$(mktemp)"
+  curl -fsSL "${url}" -o "${tmp_file}"
+  sha256_file "${tmp_file}"
+  rm -f "${tmp_file}"
+}
+
 render_formula() {
   local formula_name="$1"
   local archive_sha="$2"
   local class_name="$3"
   local formula_tag="$4"
+  local numi_macos_arm_sha="${5:-}"
+  local numi_macos_x86_sha="${6:-}"
+  local numi_linux_x86_sha="${7:-}"
 
   case "${formula_name}" in
     grapha)
@@ -126,15 +146,27 @@ EOF
 class ${class_name} < Formula
   desc "CLI for generating Swift code from Apple project resources"
   homepage "https://github.com/oops-rs/numi"
-  url "https://github.com/oops-rs/numi/archive/refs/tags/${formula_tag}.tar.gz"
-  sha256 "${archive_sha}"
+  version "${formula_tag#v}"
   license "MIT"
-  head "https://github.com/oops-rs/numi.git", branch: "main"
 
-  depends_on "rust" => :build
+  on_macos do
+    on_arm do
+      url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-aarch64-apple-darwin.tar.gz"
+      sha256 "${numi_macos_arm_sha}"
+    end
+    on_intel do
+      url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-x86_64-apple-darwin.tar.gz"
+      sha256 "${numi_macos_x86_sha}"
+    end
+  end
+
+  on_linux do
+    url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-x86_64-unknown-linux-gnu.tar.gz"
+    sha256 "${numi_linux_x86_sha}"
+  end
 
   def install
-    system "cargo", "install", "--locked", *std_cargo_args(path: "crates/numi-cli")
+    bin.install "numi"
   end
 
   test do
@@ -160,11 +192,22 @@ case "${formula_name}" in
     ;;
 esac
 
-archive_url="https://github.com/${repo}/archive/refs/tags/${tag}.tar.gz"
-tmp_archive="$(mktemp)"
-trap 'rm -f "${tmp_archive}"' EXIT
-curl -fsSL "${archive_url}" -o "${tmp_archive}"
-archive_sha="$(sha256_file "${tmp_archive}")"
+archive_sha=""
+numi_macos_arm_sha=""
+numi_macos_x86_sha=""
+numi_linux_x86_sha=""
+
+if [[ "${formula_name}" == "numi" ]]; then
+  numi_macos_arm_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-aarch64-apple-darwin.tar.gz")"
+  numi_macos_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-x86_64-apple-darwin.tar.gz")"
+  numi_linux_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-x86_64-unknown-linux-gnu.tar.gz")"
+else
+  archive_url="https://github.com/${repo}/archive/refs/tags/${tag}.tar.gz"
+  tmp_archive="$(mktemp)"
+  trap 'rm -f "${tmp_archive}"' EXIT
+  curl -fsSL "${archive_url}" -o "${tmp_archive}"
+  archive_sha="$(sha256_file "${tmp_archive}")"
+fi
 
 latest_formula_path="${formula_dir}/${formula_name}.rb"
 latest_class_name="$(class_name_for_formula "${formula_name}")"
@@ -175,16 +218,32 @@ if [[ -f "${latest_formula_path}" ]]; then
     versioned_formula_name="${formula_name}@${current_tag#v}"
     versioned_formula_path="${formula_dir}/${versioned_formula_name}.rb"
     versioned_class_name="$(class_name_for_formula "${formula_name}" "${current_tag#v}")"
-    current_archive_url="https://github.com/${repo}/archive/refs/tags/${current_tag}.tar.gz"
-    current_archive="$(mktemp)"
-    curl -fsSL "${current_archive_url}" -o "${current_archive}"
-    current_archive_sha="$(sha256_file "${current_archive}")"
-    rm -f "${current_archive}"
+    if [[ "${formula_name}" == "numi" ]]; then
+      current_numi_macos_arm_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-aarch64-apple-darwin.tar.gz")"
+      current_numi_macos_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-x86_64-apple-darwin.tar.gz")"
+      current_numi_linux_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-x86_64-unknown-linux-gnu.tar.gz")"
 
-    render_formula "${formula_name}" "${current_archive_sha}" "${versioned_class_name}" "${current_tag}" \
-      > "${versioned_formula_path}"
+      render_formula "${formula_name}" "" "${versioned_class_name}" "${current_tag}" \
+        "${current_numi_macos_arm_sha}" "${current_numi_macos_x86_sha}" "${current_numi_linux_x86_sha}" \
+        > "${versioned_formula_path}"
+    else
+      current_archive_url="https://github.com/${repo}/archive/refs/tags/${current_tag}.tar.gz"
+      current_archive="$(mktemp)"
+      curl -fsSL "${current_archive_url}" -o "${current_archive}"
+      current_archive_sha="$(sha256_file "${current_archive}")"
+      rm -f "${current_archive}"
+
+      render_formula "${formula_name}" "${current_archive_sha}" "${versioned_class_name}" "${current_tag}" \
+        > "${versioned_formula_path}"
+    fi
   fi
 fi
 
-render_formula "${formula_name}" "${archive_sha}" "${latest_class_name}" "${tag}" \
-  > "${latest_formula_path}"
+if [[ "${formula_name}" == "numi" ]]; then
+  render_formula "${formula_name}" "" "${latest_class_name}" "${tag}" \
+    "${numi_macos_arm_sha}" "${numi_macos_x86_sha}" "${numi_linux_x86_sha}" \
+    > "${latest_formula_path}"
+else
+  render_formula "${formula_name}" "${archive_sha}" "${latest_class_name}" "${tag}" \
+    > "${latest_formula_path}"
+fi
