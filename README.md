@@ -37,4 +37,5 @@ The tap can update itself automatically when `grapha`, `langcodec`, or `numi` pu
 On each new release:
 
 - `Formula/grapha.rb`, `Formula/langcodec-cli.rb`, and `Formula/numi.rb` are updated to the latest release.
+- `numi` updates from GitHub release assets on macOS and Linux, while `grapha` and `langcodec-cli` still update from source archives.
 - The previously current formula is preserved as `Formula/grapha@<version>.rb`, `Formula/langcodec-cli@<version>.rb`, or `Formula/numi@<version>.rb`.

@@ -74,6 +74,20 @@ download_sha256() {
   rm -f "${tmp_file}"
 }
 
+numi_asset_filename() {
+  local tag="$1"
+  local target="$2"
+  printf 'numi-%s-%s.tar.gz\n' "${tag}" "${target}"
+}
+
+numi_asset_url() {
+  local repo="$1"
+  local tag="$2"
+  local target="$3"
+  printf 'https://github.com/%s/releases/download/%s/%s\n' \
+    "${repo}" "${tag}" "$(numi_asset_filename "${tag}" "${target}")"
+}
+
 render_formula() {
   local formula_name="$1"
   local archive_sha="$2"
@@ -151,18 +165,20 @@ class ${class_name} < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-aarch64-apple-darwin.tar.gz"
+      url "$(numi_asset_url "oops-rs/numi" "${formula_tag}" "aarch64-apple-darwin")"
       sha256 "${numi_macos_arm_sha}"
     end
     on_intel do
-      url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-x86_64-apple-darwin.tar.gz"
+      url "$(numi_asset_url "oops-rs/numi" "${formula_tag}" "x86_64-apple-darwin")"
       sha256 "${numi_macos_x86_sha}"
     end
   end
 
   on_linux do
-    url "https://github.com/oops-rs/numi/releases/download/${formula_tag}/numi-${formula_tag}-x86_64-unknown-linux-gnu.tar.gz"
-    sha256 "${numi_linux_x86_sha}"
+    on_intel do
+      url "$(numi_asset_url "oops-rs/numi" "${formula_tag}" "x86_64-unknown-linux-gnu")"
+      sha256 "${numi_linux_x86_sha}"
+    end
   end
 
   def install
@@ -198,9 +214,9 @@ numi_macos_x86_sha=""
 numi_linux_x86_sha=""
 
 if [[ "${formula_name}" == "numi" ]]; then
-  numi_macos_arm_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-aarch64-apple-darwin.tar.gz")"
-  numi_macos_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-x86_64-apple-darwin.tar.gz")"
-  numi_linux_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${tag}/numi-${tag}-x86_64-unknown-linux-gnu.tar.gz")"
+  numi_macos_arm_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${tag}" "aarch64-apple-darwin")")"
+  numi_macos_x86_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${tag}" "x86_64-apple-darwin")")"
+  numi_linux_x86_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${tag}" "x86_64-unknown-linux-gnu")")"
 else
   archive_url="https://github.com/${repo}/archive/refs/tags/${tag}.tar.gz"
   tmp_archive="$(mktemp)"
@@ -219,9 +235,9 @@ if [[ -f "${latest_formula_path}" ]]; then
     versioned_formula_path="${formula_dir}/${versioned_formula_name}.rb"
     versioned_class_name="$(class_name_for_formula "${formula_name}" "${current_tag#v}")"
     if [[ "${formula_name}" == "numi" ]]; then
-      current_numi_macos_arm_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-aarch64-apple-darwin.tar.gz")"
-      current_numi_macos_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-x86_64-apple-darwin.tar.gz")"
-      current_numi_linux_x86_sha="$(download_sha256 "https://github.com/${repo}/releases/download/${current_tag}/numi-${current_tag}-x86_64-unknown-linux-gnu.tar.gz")"
+      current_numi_macos_arm_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${current_tag}" "aarch64-apple-darwin")")"
+      current_numi_macos_x86_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${current_tag}" "x86_64-apple-darwin")")"
+      current_numi_linux_x86_sha="$(download_sha256 "$(numi_asset_url "${repo}" "${current_tag}" "x86_64-unknown-linux-gnu")")"
 
       render_formula "${formula_name}" "" "${versioned_class_name}" "${current_tag}" \
         "${current_numi_macos_arm_sha}" "${current_numi_macos_x86_sha}" "${current_numi_linux_x86_sha}" \

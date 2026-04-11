@@ -17,8 +17,10 @@ class Numi < Formula
   end
 
   on_linux do
-    url "https://github.com/oops-rs/numi/releases/download/v0.1.0/numi-v0.1.0-x86_64-unknown-linux-gnu.tar.gz"
-    sha256 "dd78c5172278f4afa9f18615e9738556d72a79daa670f73412d452e6c488d75f"
+    on_intel do
+      url "https://github.com/oops-rs/numi/releases/download/v0.1.0/numi-v0.1.0-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "dd78c5172278f4afa9f18615e9738556d72a79daa670f73412d452e6c488d75f"
+    end
   end
 
   def install
