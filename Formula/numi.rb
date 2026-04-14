@@ -2,24 +2,24 @@
 class Numi < Formula
   desc "CLI for generating Swift code from Apple project resources"
   homepage "https://github.com/oops-rs/numi"
-  version "0.2.1"
+  version "0.2.2"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/oops-rs/numi/releases/download/v0.2.1/numi-v0.2.1-aarch64-apple-darwin.tar.gz"
-      sha256 "dc60f36bf977f15ab77e174b8e56150a580901d222c78b55ed46992d619bef32"
+      url "https://github.com/oops-rs/numi/releases/download/v0.2.2/numi-v0.2.2-aarch64-apple-darwin.tar.gz"
+      sha256 "1351d959f69b3642006e34924ba38ff32c846eb71d4dc948d9539a3fe648f2ae"
     end
     on_intel do
-      url "https://github.com/oops-rs/numi/releases/download/v0.2.1/numi-v0.2.1-x86_64-apple-darwin.tar.gz"
-      sha256 "d39b905b67166486dfd6970353ed34c80623da6d87dc5a1bc61027d014a11cbe"
+      url "https://github.com/oops-rs/numi/releases/download/v0.2.2/numi-v0.2.2-x86_64-apple-darwin.tar.gz"
+      sha256 "220eceddb4e140351bc622d52fe2d8c96a1fbb71d78249e53a6bd20c3c48524c"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/oops-rs/numi/releases/download/v0.2.1/numi-v0.2.1-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "87e1e734e4bbff3fda110716916f18adfd9874b6e176172940fdcc3467c46ed9"
+      url "https://github.com/oops-rs/numi/releases/download/v0.2.2/numi-v0.2.2-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "4fafd90d4d7c0823eca496916f097555fdd52b0aa2a59ff5bc31c72973945e23"
     end
   end
 
