@@ -5,13 +5,24 @@ usage() {
   cat <<'EOF'
 Usage:
   scripts/update-formula.sh <formula> <tag>
+  scripts/update-formula.sh --versioned <formula> <tag>
 
 Examples:
   scripts/update-formula.sh grapha v0.1.1
+  scripts/update-formula.sh --versioned grapha v0.2.1
   scripts/update-formula.sh langcodec-cli v0.11.0
   scripts/update-formula.sh numi v0.1.0
 EOF
 }
+
+write_versioned_only=0
+
+case "${1:-}" in
+  --versioned)
+    write_versioned_only=1
+    shift
+    ;;
+esac
 
 if [[ $# -ne 2 ]]; then
   usage >&2
@@ -243,6 +254,23 @@ fi
 
 latest_formula_path="${formula_dir}/${formula_name}.rb"
 latest_class_name="$(class_name_for_formula "${formula_name}")"
+
+if [[ "${write_versioned_only}" -eq 1 ]]; then
+  versioned_formula_name="${formula_name}@${tag#v}"
+  versioned_formula_path="${formula_dir}/${versioned_formula_name}.rb"
+  versioned_class_name="$(class_name_for_formula "${formula_name}" "${tag#v}")"
+
+  if [[ "${formula_name}" == "numi" ]]; then
+    render_formula "${formula_name}" "" "${versioned_class_name}" "${tag}" \
+      "${numi_macos_arm_sha}" "${numi_macos_x86_sha}" "${numi_linux_x86_sha}" \
+      > "${versioned_formula_path}"
+  else
+    render_formula "${formula_name}" "${archive_sha}" "${versioned_class_name}" "${tag}" \
+      > "${versioned_formula_path}"
+  fi
+
+  exit 0
+fi
 
 if [[ -f "${latest_formula_path}" ]]; then
   current_tag="$(formula_version_from_file "${latest_formula_path}")"
