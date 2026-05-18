@@ -2,24 +2,17 @@
 class Grapha < Formula
   desc "Structural code graph CLI and MCP server for Swift and Rust"
   homepage "https://github.com/oops-rs/grapha"
-  url "https://github.com/oops-rs/grapha/archive/refs/tags/v0.4.1.tar.gz"
-  sha256 "32616337943033d1e9d030876d2af9d53a306550f02cad0eaf1a4c058814d9f3"
+  version "0.4.1"
+  url "https://github.com/oops-rs/grapha/releases/download/v0.4.1/grapha-v0.4.1-macos-arm64.tar.gz"
+  sha256 "3aa286acb4eff2059a1973a0f7e2a72348d5c5d4d6151bd32677d5c42e768302"
   license "MIT"
-  head "https://github.com/oops-rs/grapha.git", branch: "main"
 
   depends_on :macos
-  depends_on "rust" => :build
-  depends_on xcode: :build
-  uses_from_macos "swift" => :build
+  depends_on arch: :arm64
 
   def install
-    ENV["GRAPHA_SWIFT_BRIDGE_MODE"] = "required"
-    ENV["GRAPHA_SWIFT_BUILD_DISABLE_SANDBOX"] = "1"
-
-    system "cargo", "build", "-p", "grapha", "--release", "--locked"
-
-    libexec.install "target/release/grapha"
-    libexec.install "target/release/libGraphaSwiftBridge.dylib"
+    libexec.install "grapha"
+    libexec.install "libGraphaSwiftBridge.dylib"
     bin.write_env_script libexec/"grapha", GRAPHA_SWIFT_BRIDGE_PATH: libexec
   end
 

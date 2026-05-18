@@ -12,22 +12,20 @@ brew install langcodec-cli
 brew install numi
 ```
 
-To install an older pinned version after a newer release lands:
+To install an older pinned binary version after a newer release lands:
 
 ```bash
-brew install grapha@0.1.1
-brew install face@0.0.1
+brew install grapha@0.4.0
 brew install langcodec-cli@0.11.0
-brew install numi@0.1.0
+brew install numi@0.2.2
 ```
 
 ## Notes
 
 - `langcodec-cli` installs the `langcodec` binary.
-- `face` currently builds from source.
-- `numi` installs a prebuilt `numi` GitHub release binary on macOS and Linux.
-- `grapha` currently builds from source on macOS so the Swift bridge can be compiled inside the formula.
-- `langcodec` release workflows now publish standalone binary assets in addition to archives so future tap updates can switch to binary installs cleanly.
+- `grapha` and `face` currently install macOS arm64 GitHub release tarballs.
+- `langcodec-cli` and `numi` install prebuilt GitHub release tarballs on macOS arm64, macOS x86_64, and Linux x86_64.
+- Versioned formulae are kept only for releases that publish binary assets matching the formula's supported platforms.
 
 ## Automatic Updates
 
@@ -40,5 +38,5 @@ The tap can update itself automatically when `grapha`, `face`, `langcodec`, or `
 On each new release:
 
 - `Formula/grapha.rb`, `Formula/face.rb`, `Formula/langcodec-cli.rb`, and `Formula/numi.rb` are updated to the latest release.
-- `numi` updates from GitHub release assets on macOS and Linux, while `grapha`, `face`, and `langcodec-cli` still update from source archives.
-- The previously current formula is preserved as `Formula/grapha@<version>.rb`, `Formula/face@<version>.rb`, `Formula/langcodec-cli@<version>.rb`, or `Formula/numi@<version>.rb`.
+- Formulae install GitHub release tarballs directly instead of building from source inside Homebrew.
+- The previously current formula is preserved as `Formula/grapha@<version>.rb`, `Formula/face@<version>.rb`, `Formula/langcodec-cli@<version>.rb`, or `Formula/numi@<version>.rb` when matching binary release assets exist.

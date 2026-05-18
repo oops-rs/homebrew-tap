@@ -2,15 +2,16 @@
 class Face < Formula
   desc "Unix-style CLI for grouping, paging, and summarizing structured command output"
   homepage "https://github.com/oops-rs/face"
-  url "https://github.com/oops-rs/face/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "2900066a88862765675109308042412954ccb560e8f3811b87356a6eebaeba5a"
+  version "0.1.0"
+  url "https://github.com/oops-rs/face/releases/download/v0.1.0/face-v0.1.0-macos-arm64.tar.gz"
+  sha256 "8d81c6de6deaf5061545701f1237c8bf7494bbe23cf3d75c507ccb5882e21704"
   license "MIT"
-  head "https://github.com/oops-rs/face.git", branch: "main"
 
-  depends_on "rust" => :build
+  depends_on :macos
+  depends_on arch: :arm64
 
   def install
-    system "cargo", "install", "--locked", *std_cargo_args(path: "crates/face-cli")
+    bin.install "face"
   end
 
   test do

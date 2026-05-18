@@ -2,15 +2,29 @@
 class LangcodecCli < Formula
   desc "Universal CLI for converting and inspecting localization files"
   homepage "https://github.com/oops-rs/langcodec"
-  url "https://github.com/oops-rs/langcodec/archive/refs/tags/v0.12.0.tar.gz"
-  sha256 "c75a11b6eb8d3d80be15013ebed42e6246950a1ce8af8577c0c49916a9a5c20b"
+  version "0.12.0"
   license "MIT"
-  head "https://github.com/oops-rs/langcodec.git", branch: "main"
 
-  depends_on "rust" => :build
+  on_macos do
+    on_arm do
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.12.0/langcodec-v0.12.0-aarch64-apple-darwin.tar.gz"
+      sha256 "62aeb45b23c4a7ca7dfe166a42a9910bdc8c27dbab1bf50cb38c464c27003077"
+    end
+    on_intel do
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.12.0/langcodec-v0.12.0-x86_64-apple-darwin.tar.gz"
+      sha256 "98374e35eaf3ea7d96cba6caf3a74651f46e54b9369a2e97b63d4ae5d0978e1a"
+    end
+  end
+
+  on_linux do
+    on_intel do
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.12.0/langcodec-v0.12.0-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "4ac9d7c84ba7e3f81a9a19c0818f68f3c9995fde098fbeaa7c92d94346530e84"
+    end
+  end
 
   def install
-    system "cargo", "install", "--locked", *std_cargo_args(path: "langcodec-cli")
+    bin.install "langcodec"
   end
 
   test do

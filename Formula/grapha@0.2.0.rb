@@ -2,24 +2,17 @@
 class GraphaAT020 < Formula
   desc "Structural code graph CLI and MCP server for Swift and Rust"
   homepage "https://github.com/oops-rs/grapha"
-  url "https://github.com/oops-rs/grapha/archive/refs/tags/v0.2.0.tar.gz"
-  sha256 "800e4836a8d54688e419e81982fbb56ea8ed94166d7f306ae51bee129cee256a"
+  version "0.2.0"
+  url "https://github.com/oops-rs/grapha/releases/download/v0.2.0/grapha-v0.2.0-macos-arm64.tar.gz"
+  sha256 "7449a18dd910d52c699b60a8af135f73f021f41f5469f89ab1b3b811d1b5de4f"
   license "MIT"
-  head "https://github.com/oops-rs/grapha.git", branch: "main"
 
   depends_on :macos
-  depends_on "rust" => :build
-  depends_on xcode: :build
-  uses_from_macos "swift" => :build
+  depends_on arch: :arm64
 
   def install
-    ENV["GRAPHA_SWIFT_BRIDGE_MODE"] = "required"
-    ENV["GRAPHA_SWIFT_BUILD_DISABLE_SANDBOX"] = "1"
-
-    system "cargo", "build", "-p", "grapha", "--release", "--locked"
-
-    libexec.install "target/release/grapha"
-    libexec.install "grapha-swift/swift-bridge/.build/release/libGraphaSwiftBridge.dylib"
+    libexec.install "grapha"
+    libexec.install "libGraphaSwiftBridge.dylib"
     bin.write_env_script libexec/"grapha", GRAPHA_SWIFT_BRIDGE_PATH: libexec
   end
 
