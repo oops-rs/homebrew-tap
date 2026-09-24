@@ -2,24 +2,24 @@
 class LangcodecCli < Formula
   desc "Universal CLI for converting and inspecting localization files"
   homepage "https://github.com/oops-rs/langcodec"
-  version "0.14.0"
+  version "0.14.1"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.0/langcodec-v0.14.0-aarch64-apple-darwin.tar.gz"
-      sha256 "1e2dafc5519cc6eab0b39e1fdf6d72aed1d358e29c645bbaa8dc907895d83d27"
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.1/langcodec-v0.14.1-aarch64-apple-darwin.tar.gz"
+      sha256 "790b584b6274163ac48d8b7ac88eb2400187fe4603bc4a8db333df33f159f394"
     end
     on_intel do
-      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.0/langcodec-v0.14.0-x86_64-apple-darwin.tar.gz"
-      sha256 "2d2248a81dc0d06c19018cd95a996d5349c1b8c83232234c0fd7659d1d0e8ad1"
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.1/langcodec-v0.14.1-x86_64-apple-darwin.tar.gz"
+      sha256 "9394aa94b6ab495a546389765721cb90e1df0fa32b4bf4cad8760f2d69768fd6"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.0/langcodec-v0.14.0-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "ae54ced297afcaa96597582af32b5ea21b4106db8f76f2fef4f572b212dd7628"
+      url "https://github.com/oops-rs/langcodec/releases/download/v0.14.1/langcodec-v0.14.1-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "685aec5428cee4b0de3ecaac0a173eb65a086d168c670d9037d4c1bec1325422"
     end
   end
 
