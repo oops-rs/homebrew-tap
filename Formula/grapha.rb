@@ -2,9 +2,9 @@
 class Grapha < Formula
   desc "Structural code graph CLI and MCP server for Swift and Rust"
   homepage "https://github.com/oops-rs/grapha"
-  version "0.4.1"
-  url "https://github.com/oops-rs/grapha/releases/download/v0.4.1/grapha-v0.4.1-macos-arm64.tar.gz"
-  sha256 "3aa286acb4eff2059a1973a0f7e2a72348d5c5d4d6151bd32677d5c42e768302"
+  version "0.5.2"
+  url "https://github.com/oops-rs/grapha/releases/download/v0.5.2/grapha-v0.5.2-macos-arm64.tar.gz"
+  sha256 "2d6a09e56eae0651b41ef5a8cf1e222ae24af15edbc6b1b7912641f1edd6ff40"
   license "MIT"
 
   depends_on :macos
